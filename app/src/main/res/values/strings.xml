@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">PC Controller</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="your_ip_label">Your IP Address:</string>
+    <string name="your_ip_placeholder">working …</string>
+    <string name="find_hosts_btn">Find hosts</string>
+</resources>
