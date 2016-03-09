@@ -3,7 +3,8 @@
               android:orientation="horizontal"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:background="@color/background_floating_material_dark">
+              android:background="@color/background_floating_material_dark"
+              android:weightSum="1">
 
     <ImageView
             android:layout_width="100dp"
@@ -16,7 +17,8 @@
             android:orientation="vertical"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:padding="5dp">
+            android:padding="5dp"
+            android:layout_weight="0.5">
 
         <TextView
                 android:layout_width="wrap_content"
@@ -31,13 +33,29 @@
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:text="Small Text"
                 android:id="@+id/hostNameTextView"/>
-    </LinearLayout>
 
-    <ToggleButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="New ToggleButton"
-            android:id="@+id/toggleButton"
-            android:layout_gravity="right"/>
+        <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:text="up since:"
+                    android:id="@+id/textView"
+                    android:paddingRight="3dp"/>
+
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:text="Small Text"
+                    android:id="@+id/hostBoottimeTextView"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
 
 </LinearLayout>

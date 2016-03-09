@@ -27,10 +27,12 @@ class HostAdapter extends ArrayAdapter<TargetHost> {
         TargetHost host = getItem(position) as TargetHost
         TextView hostIpTextView = hostView.findViewById(R.id.hostIpTextView) as TextView
         TextView hostNameTextView = hostView.findViewById(R.id.hostNameTextView) as TextView
+        TextView hostBoottimeTextView = hostView.findViewById(R.id.hostBoottimeTextView) as TextView
         ImageView icon = hostView.findViewById(R.id.iconImageView) as ImageView
 
         hostIpTextView.setText("10.0.1." + host.ipAddress)
         hostNameTextView.setText(host.hostname)
+        hostBoottimeTextView.setText(host.boottime)
 
         icon.setImageResource(R.drawable.ubuntu)
 

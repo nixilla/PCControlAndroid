@@ -33,13 +33,13 @@ class TargetHostSpec extends Specification {
         String someString = "value"
 
         when:
-        for(str in ["hostname", "token"]) {
+        for(str in ["hostname", "token", "boottime", "status"]) {
             subject[str] = someString
         }
 
 
         then:
-        for(str in ["hostname", "token"]) {
+        for(str in ["hostname", "token", "boottime", "status"]) {
             subject[str] == someString
         }
     }

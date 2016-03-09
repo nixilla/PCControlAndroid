@@ -9,10 +9,15 @@ import android.os.Bundle;
 import android.text.format.Formatter;
 import android.util.Log;
 import android.view.View;
-import android.widget.BaseAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.JsonHttpResponseHandler;
+import com.loopj.android.http.PersistentCookieStore;
+import cz.msebera.android.httpclient.Header;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.*;
 
@@ -51,24 +56,37 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void findHosts(View view) {
+
         Log.i("com.nixilla", "clicked Find hosts");
 
-        // for testing
+        AsyncHttpClient client = new AsyncHttpClient();
+        PersistentCookieStore cookieStore = new PersistentCookieStore(this);
+        client.setCookieStore(cookieStore);
 
-        for (int i = 1; i < 19; i++) {
+        String url = "http://10.0.1.6:8081/";
 
-            TargetHost host = new TargetHost();
-            host.setHostname("ubuntu-desktop");
-            host.setIpAddress(i);
-            host.setToken("123123");
-            host.setCookieName("PHPSSID");
-            host.setCookieValue("sdkjfhalkjdfhalskjdf");
-            hosts.add(host);
-        }
+        client.get(url, new JsonHttpResponseHandler() {
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
 
 
+                try {
+                    TargetHost host = new TargetHost();
+                    host.setHostname(response.getString("hostname"));
+                    host.setIpAddress(1);
+                    host.setToken(response.getString("token"));
+                    host.setBoottime(response.getString("boottime"));
+                    host.setStatus(response.getString("status"));
+//                    host.setCookieName("PHPSSID");
+//                    host.setCookieValue("sdkjfhalkjdfhalskjdf");
 
-        ListView hostsListView = (ListView) findViewById(R.id.hostsListView);
-        ((BaseAdapter) hostsListView.getAdapter()).notifyDataSetChanged();
+                    ((HostAdapter)((ListView) findViewById(R.id.hostsListView)).getAdapter()).add(host);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 }
