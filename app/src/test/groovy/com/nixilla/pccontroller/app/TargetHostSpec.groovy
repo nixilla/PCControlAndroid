@@ -13,19 +13,6 @@ class TargetHostSpec extends Specification {
         subject instanceof TargetHost
     }
 
-    void "it has IP address property"() {
-
-        given:
-        def subject = new TargetHost()
-        Integer address = 1
-
-        when:
-        subject.ipAddress = address
-
-        then:
-        subject.ipAddress == address
-    }
-
     void "it has some string properties"() {
 
         given:
@@ -33,28 +20,14 @@ class TargetHostSpec extends Specification {
         String someString = "value"
 
         when:
-        for(str in ["hostname", "token", "boottime", "status"]) {
+        for(str in ["hostname", "token", "boottime", "status", "ipAddress"]) {
             subject[str] = someString
         }
 
 
         then:
-        for(str in ["hostname", "token", "boottime", "status"]) {
+        for(str in ["hostname", "token", "boottime", "status", "ipAddress"]) {
             subject[str] == someString
         }
-    }
-
-    void "it has a cookie property"() {
-
-        given:
-        def subject = new TargetHost()
-
-        when:
-        subject.cookieName = "PHPSSID"
-        subject.cookieValue = "skjdfhskjdfhskjdf"
-
-        then:
-        subject.cookieName == "PHPSSID"
-        subject.cookieValue == "skjdfhskjdfhskjdf"
     }
 }

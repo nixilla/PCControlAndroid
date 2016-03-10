@@ -5,12 +5,10 @@ import groovy.transform.CompileStatic
 @CompileStatic
 class TargetHost {
 
-    Integer ipAddress
+    String ipAddress
     String hostname
     String token
     String boottime
     String status
-    String cookieName
-    String cookieValue
 
 }

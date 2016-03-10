@@ -23,6 +23,9 @@ import java.util.*;
 
 public class MainActivity extends AppCompatActivity {
 
+    AsyncHttpClient client;
+    NetworkHelper helper = new NetworkHelper();
+    String ipAddress;
     List<TargetHost> hosts = new ArrayList<>();
 
     @Override
@@ -30,6 +33,13 @@ public class MainActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        client = new AsyncHttpClient();
+        PersistentCookieStore cookieStore = new PersistentCookieStore(this);
+        client.setCookieStore(cookieStore);
+        client.setTimeout(1000);
+        client.setMaxRetriesAndTimeout(0,0);
+
 
         TextView ipTextView = (TextView) findViewById(R.id.ipTextView);
 
@@ -39,11 +49,9 @@ public class MainActivity extends AppCompatActivity {
         if (mWifi.isConnected()) {
 
             WifiManager wm = (WifiManager) getSystemService(WIFI_SERVICE);
-            String ip = Formatter.formatIpAddress(wm.getConnectionInfo().getIpAddress());
+            ipAddress = Formatter.formatIpAddress(wm.getConnectionInfo().getIpAddress());
 
-            Log.i("com.nixilla", wm.getConnectionInfo().toString());
-
-            ipTextView.setText(ip);
+            ipTextView.setText(ipAddress);
         }
         else {
             ipTextView.setText("Wifi not connected");
@@ -59,34 +67,44 @@ public class MainActivity extends AppCompatActivity {
 
         Log.i("com.nixilla", "clicked Find hosts");
 
-        AsyncHttpClient client = new AsyncHttpClient();
-        PersistentCookieStore cookieStore = new PersistentCookieStore(this);
-        client.setCookieStore(cookieStore);
+        final HostAdapter adapter = (HostAdapter) ((ListView) findViewById(R.id.hostsListView)).getAdapter();
 
-        String url = "http://10.0.1.6:8081/";
+        adapter.clear();
 
-        client.get(url, new JsonHttpResponseHandler() {
+        List<String> ipRange = helper.getClassC(ipAddress);
 
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+        for(final String ip : ipRange) {
 
+            String url = "http://" + ip + ":8081/";
 
-                try {
-                    TargetHost host = new TargetHost();
-                    host.setHostname(response.getString("hostname"));
-                    host.setIpAddress(1);
-                    host.setToken(response.getString("token"));
-                    host.setBoottime(response.getString("boottime"));
-                    host.setStatus(response.getString("status"));
-//                    host.setCookieName("PHPSSID");
-//                    host.setCookieValue("sdkjfhalkjdfhalskjdf");
+            client.get(url, new JsonHttpResponseHandler() {
 
-                    ((HostAdapter)((ListView) findViewById(R.id.hostsListView)).getAdapter()).add(host);
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
 
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                    try {
+
+                        TargetHost host = new TargetHost();
+                        host.setHostname(response.getString("hostname"));
+                        host.setIpAddress(ip);
+                        host.setToken(response.getString("token"));
+                        host.setBoottime(response.getString("boottime"));
+                        host.setStatus(response.getString("status"));
+
+                        adapter.add(host);
+
+                        Log.i("com.nixilla", "IP " + ip + " responds, added ...");
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 }
-            }
-        });
+
+                @Override
+                public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                    Log.i("com.nixilla", "IP " + ip + " not responding. " + throwable.getMessage());
+                }
+            });
+        }
     }
 }
