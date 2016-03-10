@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
             Log.i("com.nixilla", "Wifi not connected");
         }
 
-        ListAdapter adapter = new HostAdapter(this, hosts);
+        ListAdapter adapter = new HostAdapter(this, hosts, client);
         ListView hostsListView = (ListView) findViewById(R.id.hostsListView);
         hostsListView.setAdapter(adapter);
     }
@@ -106,5 +106,10 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
         }
+    }
+
+    public void shutdown(View view) {
+
+
     }
 }
