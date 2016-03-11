@@ -16,6 +16,7 @@ import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.PersistentCookieStore;
 import cz.msebera.android.httpclient.Header;
+import cz.msebera.android.httpclient.cookie.Cookie;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -24,6 +25,7 @@ import java.util.*;
 public class MainActivity extends AppCompatActivity {
 
     AsyncHttpClient client;
+    PersistentCookieStore cookieStore;
     NetworkHelper helper = new NetworkHelper();
     String ipAddress;
     List<TargetHost> hosts = new ArrayList<>();
@@ -35,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         client = new AsyncHttpClient();
-        PersistentCookieStore cookieStore = new PersistentCookieStore(this);
+        cookieStore = new PersistentCookieStore(this);
         client.setCookieStore(cookieStore);
         client.setTimeout(1000);
         client.setMaxRetriesAndTimeout(0,0);
@@ -75,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
 
         for(final String ip : ipRange) {
 
-            String url = "http://" + ip + ":8081/";
+            String url = "http://" + ip + ":60806/";
 
             client.get(url, new JsonHttpResponseHandler() {
 
@@ -106,10 +108,9 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
         }
-    }
 
-    public void shutdown(View view) {
-
-
+        for(Cookie cookie : cookieStore.getCookies()) {
+            Log.i("com.nixilla", cookie.getName() + " : " + cookie.getValue() + " / " + cookie.getDomain());
+        }
     }
 }

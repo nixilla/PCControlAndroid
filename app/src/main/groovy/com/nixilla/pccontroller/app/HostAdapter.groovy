@@ -1,14 +1,14 @@
 package com.nixilla.pccontroller.app
 
+import groovy.transform.CompileStatic
+
 import android.util.Log
 import android.widget.Button
 import android.widget.Toast
 import com.loopj.android.http.AsyncHttpClient
 import com.loopj.android.http.JsonHttpResponseHandler
-import com.loopj.android.http.RequestParams
 import cz.msebera.android.httpclient.Header
-import groovy.transform.CompileStatic
-
+import cz.msebera.android.httpclient.entity.StringEntity
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
@@ -47,15 +47,13 @@ class HostAdapter extends ArrayAdapter<TargetHost> {
             @Override
             void onClick(View v) {
 
-                Log.i("com.nixilla", "I would shutdown host at IP ${host?.ipAddress}")
+                String url = "http://${host?.ipAddress}:60806/"
 
-                String url = "http://${host?.ipAddress}:8081/"
+                JSONObject jsonParams = new JSONObject()
+                jsonParams.put("token", host.token)
+                StringEntity entity = new StringEntity(jsonParams.toString())
 
-                RequestParams params = new RequestParams()
-
-                params.add("token", host.token)
-
-                client.post(url, params, new JsonHttpResponseHandler() {
+                client.post(v.getContext(), url, entity, "application/json", new JsonHttpResponseHandler() {
 
                     @Override
                     void onSuccess(int statusCode, Header[] headers, JSONObject response) {
@@ -64,8 +62,8 @@ class HostAdapter extends ArrayAdapter<TargetHost> {
                     }
 
                     @Override
-                    void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                        Log.i("com.nixilla", "Shutdown request failed: ${throwable.message}")
+                    void onFailure(int statusCode, Header[] headers, String message, Throwable throwable) {
+                        Log.i("com.nixilla", "Shutdown request failed: ${throwable.message} / ${message}" )
                         Toast.makeText(v.getContext(), "Unable to send shutdown request, try again ...", Toast.LENGTH_SHORT).show()
                     }
                 })
